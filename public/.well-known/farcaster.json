@@ -7,12 +7,14 @@
   "frame": {
     "version": "1",
     "name": "Insight",
-    "iconUrl": "https://insight-rust.vercel.app/icon.png",
+    "iconUrl": "https://insight-rust.vercel.app/logo192.png",
     "homeUrl": "https://insight-rust.vercel.app",
-    "imageUrl": "https://insight-rust.vercel.app/image.png",
+    "imageUrl": "https://insight-rust.vercel.app/logo192.png",
     "buttonTitle": "Analyze my activity",
     "splashImageUrl": "https://insight-rust.vercel.app/splash.png",
     "splashBackgroundColor": "#eeccff",
     "webhookUrl": "https://insight-rust.vercel.app/api/webhook"
   }
 }
+
+public\logo192.png
