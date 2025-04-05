@@ -34,3 +34,4 @@ Check your own stats: ${process.env.NEXT_PUBLIC_HOST}`
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
+

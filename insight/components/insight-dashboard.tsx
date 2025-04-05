@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   MessageSquare,
@@ -23,12 +23,20 @@ import StatsCard from "@/components/stats-card"
 import PerformanceIndicator from "@/components/performance-indicator"
 import GradientBackground from "@/components/gradient-background"
 import type { UserData } from "@/types/farcaster"
-import { initFrameSDK, type FrameSDK } from "@/lib/frame-sdk"
+
+declare global {
+  interface Window {
+    frameSDK?: {
+      actions: {
+        ready: () => void
+      }
+    }
+  }
+}
 
 export default function InsightDashboard() {
   const [loading, setLoading] = useState(false)
   const [analyzed, setAnalyzed] = useState(false)
-  const [sdk, setSdk] = useState<FrameSDK | null>(null)
   const [userData, setUserData] = useState<UserData>({
     fid: "12345",
     username: "farcaster_user",
@@ -53,65 +61,14 @@ export default function InsightDashboard() {
     },
   })
 
-  // Initialize the Frame SDK
   useEffect(() => {
-    const frameSDK = initFrameSDK()
-    setSdk(frameSDK)
-
-    // Signal that the frame is ready
-    frameSDK.actions.ready()
-
-    // Set up event listeners
-    frameSDK.events.on("frameAdded", (data) => {
-      console.log("Frame added:", data)
-    })
-
-    frameSDK.events.on("frameRemoved", (data) => {
-      console.log("Frame removed:", data)
-    })
-
-    frameSDK.events.on("notificationsEnabled", (data) => {
-      console.log("Notifications enabled:", data)
-    })
-
-    frameSDK.events.on("notificationsDisabled", (data) => {
-      console.log("Notifications disabled:", data)
-    })
-
-    frameSDK.events.on("primaryButtonClick", () => {
-      console.log("Primary button clicked")
-      handleShare()
-    })
-
-    // Set up primary button
-    frameSDK.actions.setPrimaryButton({
-      text: "Share Analytics",
-      enabled: true,
-      hidden: false,
-    })
-
-    // Clean up event listeners on unmount
-    return () => {
-      frameSDK.events.removeAllListeners()
+    // Hide splash screen when component is fully loaded
+    if (typeof window !== "undefined" && window.frameSDK) {
+      window.frameSDK.actions.ready()
     }
   }, [])
 
-  // Handle different launch contexts
-  useEffect(() => {
-    if (!sdk) return
-
-    const context = sdk.context.location
-    console.log("Launch context:", context)
-
-    // If launched from a user profile, automatically analyze that user
-    if (context.location === "user" && context.userFid) {
-      // In a real implementation, we would fetch data for this specific user
-      console.log(`Auto-analyzing user: ${context.userFid}`)
-      handleAnalyze()
-    }
-  }, [sdk])
-
-  const handleAnalyze = useCallback(() => {
+  const handleAnalyze = () => {
     setLoading(true)
 
     // In a real implementation, this would be handled by the frame protocol
@@ -157,7 +114,7 @@ export default function InsightDashboard() {
       setLoading(false)
       setAnalyzed(true)
     }, 2000)
-  }, [])
+  }
 
   // Helper functions for calculating metrics
   function calculateNetworkReach(casts: number, recasts: number, quotes: number): number {
@@ -177,21 +134,11 @@ export default function InsightDashboard() {
     return Math.min(100, Math.round((Math.sqrt(ratio) / 2) * 100))
   }
 
-  const handleShare = useCallback(() => {
+  const handleShare = () => {
     // In a real implementation, this would trigger the frame's share functionality
-    console.log("Sharing analytics as cast")
-
-    // If we have the SDK, we can also view the user's profile
-    if (sdk && userData.fid) {
-      sdk.actions.viewProfile({ fid: userData.fid })
-    }
-  }, [sdk, userData])
-
-  const handleViewProfile = useCallback(() => {
-    if (sdk && userData.fid) {
-      sdk.actions.viewProfile({ fid: userData.fid })
-    }
-  }, [sdk, userData])
+    // For preview purposes, we'll just show an alert
+    alert("In the actual frame, this would share your stats as a cast!")
+  }
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-[#0a0a1f]">
@@ -279,7 +226,6 @@ export default function InsightDashboard() {
                 profilePicture={userData.pfp}
                 followerCount={userData.followerCount}
                 followingCount={userData.followingCount}
-                onViewProfile={handleViewProfile}
               />
 
               {/* Stats Section */}

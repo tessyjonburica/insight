@@ -3,9 +3,8 @@
 import { motion } from "framer-motion"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import Image from "next/image"
-import { AtSign, Users, ExternalLink } from "lucide-react"
+import { AtSign, Users } from "lucide-react"
 
 interface ProfileSectionProps {
   username: string
@@ -14,7 +13,6 @@ interface ProfileSectionProps {
   profilePicture: string
   followerCount: number
   followingCount: number
-  onViewProfile?: () => void
 }
 
 export default function ProfileSection({
@@ -24,7 +22,6 @@ export default function ProfileSection({
   profilePicture,
   followerCount,
   followingCount,
-  onViewProfile,
 }: ProfileSectionProps) {
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
@@ -46,7 +43,7 @@ export default function ProfileSection({
             </div>
           </motion.div>
 
-          <div className="text-center sm:text-left flex-1">
+          <div className="text-center sm:text-left">
             <motion.div
               initial={{ opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
@@ -81,25 +78,6 @@ export default function ProfileSection({
               </div>
             </motion.div>
           </div>
-
-          {onViewProfile && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.5 }}
-              className="ml-auto"
-            >
-              <Button
-                onClick={onViewProfile}
-                variant="outline"
-                size="sm"
-                className="bg-teal-500/10 text-teal-400 border-teal-500/30 hover:bg-teal-500/20"
-              >
-                <ExternalLink className="h-4 w-4 mr-2" />
-                View Profile
-              </Button>
-            </motion.div>
-          )}
         </div>
       </Card>
     </motion.div>
